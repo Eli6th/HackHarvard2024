@@ -1,0 +1,28 @@
+# https://dev-yakuza.posstree.com/en/react/github-actions/prettier-eslint/
+# https://mskelton.medium.com/auto-formatting-code-using-prettier-and-github-actions-ed458f58b7df
+# Formats source code (with Prettier, set in package.json) and checks for linting errors
+
+name: Format source code and check for linting errors
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    name: Format source code and check for linting errors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Install packages
+        run: npm ci
+      - name: Format with Prettier
+        run: npm run prettier:fix
+      - name: Commit formatting changes with Prettier
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply formatting changes
+          branch: ${{ github.head_ref }}
+      - name: Lint with eslint
+        run: npm run lint:fix
